@@ -1,11 +1,6 @@
-## Calculating the period of the sunspot cycle
-
-The code is used to plot monthly mean sunspot numbers and determine the solar cycle. The Fast Fourier Transform (FFT) algorithm  is used to compute the Discrete Fourier Transform and to analyse the variations in sunspot activity over the last 350 years. You can download the monthly mean total sunspot number as csv-file from WDC-SILSO, Royal Observatory of Belgium, Brussels (http://sidc.be/silso/home).
-A general introduction to Fourier Transforms and a tutorial in Python is on the Real Python website (https://realpython.com/python-scipy-fft/).
-Jake VanderPlas explained in his blog how the FFT algorithm works (http://jakevdp.github.io/blog/2013/08/28/understanding-the-fft/).
-
-
 ```python
+# Analysing the yearly sunspot activity
+
 import matplotlib.pyplot as plt
 import pandas as pd
 from scipy.fft import fft
@@ -20,12 +15,16 @@ d_ssn = df.loc[:, 'ssn']
 d_year = df.loc[:, 'year']
 d_ssn = d_ssn.to_numpy()
 d_year = d_year.to_numpy()
-```
 
-Plot the sunspot numbers
+
+# Plot the sunspot numbers
+
+```
 
 
 ```python
+
+
 fig = plt.figure()
 plt.plot(d_year, d_ssn, linewidth=0.5)
 plt.axis([1700, 2050, 0, 600])
@@ -36,16 +35,19 @@ plt.figtext(0.5, 0.01, 'Data: WDC-SILSO, Royal Observatory of Belgium, Brussels'
             ha='center', fontsize=8)
 plt.show()
 
+
 ```
 
 
     
-![png](output_4_0.png)
+![png](output_1_0.png)
     
 
 
 
 ```python
+
+
 # use Fast Fourier Transform on sunspot numbers
 sp_fft = fft(d_ssn)
 # the first entry is simply the sum of the data and we delete it
@@ -62,6 +64,14 @@ plt.xlabel('real (FFT)')
 plt.ylabel('imag (FFT)')
 plt.title('Fourier Coefficients')
 plt.show()
+
+
+# Fourier coefficients are difficult to interpret. Squaring the magnitude of
+# the coefficients is a measure of power. In the FFT array half of the
+# coefficients are repeated in magnitude, so it is sufficient to calculate the
+# power of one half.
+# Plot the power spectrum as a function of frequency, measured in cycles per year.
+
 ```
 
     First entry in array:  (25203.8-0j)
@@ -70,18 +80,14 @@ plt.show()
 
 
     
-![png](output_5_1.png)
+![png](output_2_1.png)
     
 
 
-Fourier coefficients are difficult to interpret. Squaring the magnitude of
-the coefficients is a measure of power. In the FFT array half of the
-coefficients are repeated in magnitude, so it is sufficient to calculate the
-power of one half.
-Plot the power spectrum as a function of frequency, measured in cycles per year.
-
 
 ```python
+
+
 n = len(sp_fft)
 power = abs(sp_fft[0:((n + 1) // 2)])**2
 nyquist = 0.5
@@ -94,20 +100,24 @@ plt.xlim(0, 0.5)
 plt.ylabel('Power')
 plt.xlabel('Cycles/Year')
 plt.show()
+
+
+# The frequency for the maximum sunspot activity is less than one year. Changing
+# to period instead of cycles is easier to interpret.
+# The plot indicates a sunspot cycle between 11 and 12 years.
+
 ```
 
 
     
-![png](output_7_0.png)
+![png](output_3_0.png)
     
 
 
-The frequency for the maximum sunspot activity is less than one year. Changing
-to period instead of cycles is easier to interpret.
-The plot indicates a sunspot cycle between 11 and 12 years.
-
 
 ```python
+
+
 period = 1 / freq
 fig = plt.figure()
 plt.plot(period, power)
@@ -115,18 +125,22 @@ plt.xlim(0, 20)
 plt.xlabel('Years/Cycle')
 plt.ylabel('Power')
 plt.show()
+
+
+# Changing the limit of the plot, we see a cycle of about 11.4 years.
+
 ```
 
 
     
-![png](output_9_0.png)
+![png](output_4_0.png)
     
 
 
-Changing the limit of the plot, we see a cycle of about 11.4 years.
-
 
 ```python
+
+
 period = 1 / freq
 fig = plt.figure()
 plt.plot(period, power)
@@ -134,13 +148,24 @@ plt.xlim(10, 12)
 plt.xlabel('Years/Cycle')
 plt.ylabel('Power')
 plt.show()
+
+
 ```
 
 
     
-![png](output_11_0.png)
+![png](output_5_0.png)
     
 
+
+
+```python
+
+
+
+
+
+```
 
 
 ```python
